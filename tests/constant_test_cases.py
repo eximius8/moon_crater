@@ -17,4 +17,8 @@ PUBLIC_TEST_CASES = [
 ]
 
 # Здесь можно написать свои тестовые случаи
-SECRET_TEST_CASES = []
+SECRET_TEST_CASES = [
+    {"test_input": [[0,], [0,], [0,]], "expected": 0},
+    {"test_input": [[0, 0, 0]], "expected": 0},
+    {"test_input": [[0, 1, 0]], "expected": 1},
+]
