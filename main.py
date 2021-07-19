@@ -70,12 +70,14 @@ def calculate_selfmade(matr: list) -> int:
                     # Если текущй ярлык не равен ярлыку над ним, то создаем конфликт.
                     if above_label and above_label != current_label:
                         conflicts.add((max(above_label, current_label), min(above_label, current_label)))
-
+    # Разрешение конфликтов
     for i in range(len(labeled_matr)):
         for j in range(len(labeled_matr[0])):
             for conflict in sorted(conflicts, reverse=True):
+                # замена ярлыков для каждого конфликта
                 if labeled_matr[i][j] == conflict[0]:
                     labeled_matr[i][j] = conflict[1]
+    # Сет всех ярлыков из списка ярлыков
     all_labels = set(itertools.chain.from_iterable(labeled_matr))
     if 0 in all_labels:
         return len(all_labels) - 1
