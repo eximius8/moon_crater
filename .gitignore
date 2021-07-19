@@ -1,0 +1,6 @@
+env/
+*zip
+.tox
+venv/
+__pycache__
+.mypy*
