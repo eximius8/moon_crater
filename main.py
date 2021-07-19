@@ -17,7 +17,7 @@ def read_craters(filename: str, delimiter: str) -> list:
 
 
 def calculate(matr: list) -> int:
-    """Функция для подсчета кратеров на поверхности Луны.
+    """Функция для подсчета кратеров на поверхности Луны реализована с использованием сторонней библиотеки.
 
     Принимает:
       matr - список из 0 и 1
@@ -29,36 +29,61 @@ def calculate(matr: list) -> int:
     return num
 
 def calculate_selfmade(matr: list) -> int:
-    """Функция для подсчета кратеров на поверхности Луны.
+    """Функция для подсчета кратеров на поверхности Луны. Функция использует метод Row-by-Row.
 
+    Подробнее о методе:
+    https://www.youtube.com/watch?v=hMIrQdX4BkE
     Принимает:
       matr - список из 0 и 1
     Возвращает
       число найденных кратеров
     """
-    labeled_matr = np.zeros( (len(matr), len(matr[0])))
-    print(labeled_matr)
+    # создание наполненной нулями матрицы ярлыков того же размера что исходная
+    labeled_matr = np.zeros((len(matr), len(matr[0])))
+    # создание сета для записи конфликтов. Например {(2,1), (3,2)}
     conflicts = set()
+    label = 0
     for i in range(len(matr)):
-      label = 1
+      # текущее значение ярлыка для внесения в матрицу ярлыков      
       for j in range(len(matr[0])):
-        print(i)
+        # Если значение не равно 0 создать ярлык в матрице ярлыков 
         if matr[i][j]:
-          if j > 0 and not matr[i][j - 1]:
+          # Если значение слева ненулевое, ярлык = значение слева
+          if j > 0 and matr[i][j - 1] != 0:
+            labeled_matr[i][j] = labeled_matr[i][j-1]
+          # Если значение сверху ненулевое, ярлык = значение сверху
+          elif i > 0 and matr[i-1][j] != 0:
+            labeled_matr[i][j] = labeled_matr[i-1][j]
+          else:
             label += 1
-          labeled_matr[i][j] = label
+            labeled_matr[i][j] = label
+          # Работа с конфликтами
+          if i > 0:
+            # Значение текущего ярлыка
+            current_label = labeled_matr[i][j]
+            # Значение ярлыка над текущим
+            above_label = labeled_matr[i - 1][j]
+            # Если текущй ярлык не равен ярлыку над ним, то создаем конфликт.
+            if above_label and above_label != current_label:
+              conflicts.add((max(above_label, current_label), min(above_label, current_label)))
+    print(labeled_matr)
+    print(conflicts)
+    for i in range(len(labeled_matr)):
+      for j in range(len(labeled_matr[0])):
+        for conflict in sorted(conflicts, reverse=True):
+          if labeled_matr[i][j] == conflict[0]:
+            labeled_matr[i][j] = conflict[1]
+    print(labeled_matr)
+    
 
-          if i > 0 and labeled_matr[i - 1][j]:
-            above = labeled_matr[i - 1][j]
-            conflicts.add((max(above, label), min(above, label)))         
-        print(labeled_matr)
     
     return 5
 
 matr_test = [
-            [1, 1, 1],
-            [0, 0, 0],
-            [1, 0, 1],
+            [1, 1, 1, 1, 1],
+            [1, 0, 1, 0, 1],
+            [0, 1, 1, 0, 1],
+            [1, 0, 1, 1, 0],
         ]
 
 calculate_selfmade(matr_test)
